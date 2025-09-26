@@ -53,8 +53,9 @@ const server = createServer(app);
 connectDB();
 
 // Initialize Socket.io
-initializeSocket(server);
-app.set("io", initializeSocket(server));
+
+const io = initializeSocket(server);
+app.set("io", io); // store io if needed in routes
 
 // Middlewares
 const allowedOrigins = [

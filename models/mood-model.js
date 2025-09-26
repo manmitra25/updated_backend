@@ -6,6 +6,10 @@ const MoodQuestionSchema = new mongoose.Schema({
   scaleMax: { type: Number, default: 10 },
 });
 
+
+// date
+// mood 
+
 const MoodQuestion = mongoose.model("MoodQuestion", MoodQuestionSchema);
 
 export default MoodQuestion;

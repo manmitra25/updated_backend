@@ -39,10 +39,10 @@ const communitySchema = new mongoose.Schema({
       default: Date.now
     }
   }],
-  channels: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Channel'
-  }],
+  // channels: [{
+  //   type: mongoose.Schema.Types.ObjectId,
+  //   ref: 'Channel'
+  // }],
   rules: [{
     type: String
   }],
