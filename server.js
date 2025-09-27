@@ -22,6 +22,8 @@ import volunteerRoutes from "./routes/volunteer-routes.js";
 import hubRoutes from "./routes/hubRoutes.js";
 import taskRoutes from "./routes/taskProgressRoutes.js";
 
+import testRoutes from "./routes/test-routes.js";
+
 import therapistSessionRoutes from "./routes/notes-routes.js";
 
 // NEW Peer-Community routes
@@ -110,7 +112,7 @@ app.use("/api/messages", messageRoutes);
 //chat route
 app.use("/api/chat", chatRoutes);
 
-
+app.use("/api/tests",testRoutes);
 
 // other middlewares...
 app.use("/api/bookings", bookingRoutes);
