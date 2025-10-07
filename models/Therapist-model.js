@@ -17,6 +17,11 @@ const therapistSchema = new mongoose.Schema(
       default: 0
     },
 
+      // NEW: daily recurring times (apply to every day)
+    dailyTimes: {
+      type: [String],          // e.g., ["10:00 AM", "2:00 PM", "5:00 PM"]
+      default: [],
+    },
     // Availability merged here
     availability: [
       {
@@ -30,5 +35,6 @@ const therapistSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const Therapist = mongoose.model("Therapist", therapistSchema);
+const Therapist =
+  mongoose.models.Therapist || mongoose.model("Therapist", therapistSchema);
 export default Therapist;

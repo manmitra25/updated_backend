@@ -1,14 +1,14 @@
 import mongoose from "mongoose";
 
 export const BOOKING_TOPICS = [
-  "Self Improvement",
-  "Sexual Wellness",
-  "Abuse & Discrimination",
-  "Academic",
-  "Career",
-  "LGBTQIA+",
-  "Psychological Disorders",
-  "Relationship",
+  "self Improvement",
+  "sexual Wellness",
+  "abuse & discrimination",
+  "academic",
+  "career",
+  "lgbtqia+",
+  "psychological disorders",
+  "relationship",
 ];
 
 const bookingSchema = new mongoose.Schema(
@@ -49,6 +49,16 @@ bookingSchema.index({ therapistId: 1, date: 1, time: 1, status: 1 });
 // RULE: a student may have at most one *active* (pending/confirmed) booking per therapist
 bookingSchema.index(
   { studentId: 1, therapistId: 1 },
+  {
+    unique: true,
+    partialFilterExpression: { status: { $in: ["pending", "confirmed"] } },
+  }
+);
+
+
+// NEW: hard guard — a slot (therapistId + date + time) can be used by at most one active booking
+bookingSchema.index(
+  { therapistId: 1, date: 1, time: 1 },
   {
     unique: true,
     partialFilterExpression: { status: { $in: ["pending", "confirmed"] } },

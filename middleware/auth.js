@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 import Volunteer from '../models/Volunteers-model.js';
 import Student from '../models/student-model.js';
 import Therapist from '../models/Therapist-model.js';
+import mongoose from 'mongoose';
 
 /**
  * Generic route protection middleware
@@ -12,7 +13,6 @@ export const protect = async (req, res, next) => {
   try {
     let token;
 
-    // Check Authorization header
     if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
       token = req.headers.authorization.split(' ')[1];
     }
@@ -21,24 +21,34 @@ export const protect = async (req, res, next) => {
       return res.status(401).json({ message: 'Not authorized, token missing' });
     }
 
-    // Decode token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     console.log('Decoded token:', decoded);
 
-    // Try fetching the user based on role
-    let user = await Student.findById(decoded.id).select('-password');
+    let user;
 
-    if (!user) user = await Volunteer.findById(decoded.id).select('-password');
-
-    if (!user && decoded.role === 'therapist') {
-      user = await Therapist.findById(decoded.id).select('-password');
+    // === Test user bypass ===
+    if (decoded.id === '68e104d5343d9076ad3abdd9' && decoded.role === 'student') {
+      user = {
+        _id: new mongoose.Types.ObjectId('68e104d5343d9076ad3abdd9'), // keep as string
+        email: 'test@gmail.com',
+        name: 'Test User',
+        role: 'student',
+        college: 'Test College',
+      };
+      console.log('Using test user bypass:', user);
+    } else {
+      // Real users: fetch from DB
+      user = await Student.findById(decoded.id).select('-password');
+      if (!user) user = await Volunteer.findById(decoded.id).select('-password');
+      if (!user && decoded.role === 'therapist') {
+        user = await Therapist.findById(decoded.id).select('-password');
+      }
     }
 
     if (!user) {
       return res.status(401).json({ message: 'User not found' });
     }
 
-    // Attach info to req.user
     req.user = {
       id: user._id,
       role: decoded.role,
@@ -52,6 +62,7 @@ export const protect = async (req, res, next) => {
     res.status(401).json({ message: 'Not authorized', error: error.message });
   }
 };
+
 
 /**
  * Volunteer-only protection middleware

@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import Student from "../models/student-model.js";
 import Therapist from "../models/Therapist-model.js";
 import bcrypt from "bcryptjs";
@@ -14,6 +15,8 @@ const transporter = nodemailer.createTransport({
     pass: process.env.EMAIL_PASS,
   },
 });
+
+
 
 // ---------------- Register Student ----------------
 export const registerStudent = async (req, res) => {
@@ -90,19 +93,39 @@ export const verifyStudentSignup = async (req, res) => {
 export const loginStudent = async (req, res) => {
   try {
     const { email, password } = req.body;
-    console.log("Login request:", email, password);
 
+    // === Bypass OTP for test accounts ===
+    if (email === 'test@gmail.com' && password === 'test@123') {
+  const testUserId = new mongoose.Types.ObjectId('68e104d5343d9076ad3abdd9'); // valid 24-char ObjectId
+  const user = {
+    _id: testUserId,
+    email: 'test@gmail.com',
+    name: 'Test User',
+    role: 'student',
+    college: 'Test College',
+  };
+
+     // Sign JWT using _id
+  const token = jwt.sign(
+    { id: testUserId.toString(), role: user.role },  //  use _id.toString()
+    process.env.JWT_SECRET,
+    { expiresIn: '1d' }
+  );
+      return res.status(200).json({
+        message: 'Login successful',
+        token,
+        user,
+      });
+    }
+
+    // --- Normal flow ---
     const student = await Student.findOne({ email });
-    console.log("Student fetched from DB:", student);
     if (!student) return res.status(404).json({ message: "Student not found" });
 
     const isMatch = await bcrypt.compare(password, student.password);
-    console.log("Password match result:", isMatch);
     if (!isMatch) return res.status(401).json({ message: "Invalid credentials" });
 
     const otp = await sendOTP(email);
-    console.log("Login OTP generated:", otp);
-
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
       to: email,
@@ -112,7 +135,6 @@ export const loginStudent = async (req, res) => {
 
     res.status(200).json({ message: "OTP sent. Verify login." });
   } catch (error) {
-    console.error("Login error:", error);
     res.status(500).json({ message: error.message });
   }
 };

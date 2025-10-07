@@ -1,3 +1,4 @@
+import os from "os";
 import dotenv from "dotenv";
 import express from "express";
 import cors from "cors";
@@ -7,6 +8,7 @@ import redisClient from "./config/redisClient.js";
 import { createServer } from "http";
 import bookingRoutes from "./routes/booking-routes.js";
 import { connectDB } from "./config/db.js";
+import { makeTransport } from "./utils/mailer.js";
 
 import "./config/chatCleanup.js";
 
@@ -68,6 +70,7 @@ const allowedOrigins = [
   "http://localhost:3003", // CRA default
   "http://localhost:3004", // CRA default
   "http://localhost:3005", // CRA default
+   "http://192.168.166.249:3000",
   process.env.FRONTEND_URL, // if you set it in env
 ];
 
@@ -127,6 +130,7 @@ app.use("/api/analytics", analyticsRoutes);
 app.use("/api/session", therapistSessionRoutes);
 
 
+
 // Health check endpoint
 app.get("/api/health", (req, res) => {
   res.status(200).json({ message: "Server is running successfully!" });
@@ -135,8 +139,33 @@ app.get("/api/health", (req, res) => {
 // Start scheduler (habit reminders, daily streaks)
 startCron();
 
+function getLocalIP() {
+  const interfaces = os.networkInterfaces();
+  for (const name in interfaces) {
+    for (const iface of interfaces[name]) {
+      if (iface.family === "IPv4" && !iface.internal) {
+        return iface.address;
+      }
+    }
+  }
+  return "localhost";
+}
+
 // Start server
 const PORT = process.env.PORT || 5000;
-server.listen(PORT, () =>
-  console.log(`🚀 Server running on http://localhost:${PORT}`)
-);
+const HOST = "0.0.0.0";
+
+server.listen(PORT,HOST, async () => {
+  const localIP = getLocalIP();
+  console.log(`🚀 Server running on http://localhost:${ PORT}`);
+    console.log(`   Local:   http://localhost:${PORT}`);
+  console.log(`   Network: http://${localIP}:${PORT}`);
+
+  // Verify SMTP once at startup
+  try {
+    await makeTransport().verify();
+    console.log("✅ SMTP ready");
+  } catch (err) {
+    console.error("❌ SMTP verify failed:", err);
+  }
+});
