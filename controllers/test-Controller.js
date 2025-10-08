@@ -1,4 +1,4 @@
-import Stress from "../models/Stress.js";
+import Stress from "../models/stress.js";
 import Depression from "../models/Depression.js";
 import Anxiety from "../models/Anxiety.js";
 import Burnout from "../models/Burnout.js";
