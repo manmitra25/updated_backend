@@ -1,4 +1,8 @@
 {
+"engines":{
+  "node":"20.19.4"
+},
+
   "name": "psy-hub-backend",
   "version": "1.0.0",
   "main": "server.js",
