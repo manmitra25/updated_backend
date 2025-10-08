@@ -71,8 +71,9 @@ const allowedOrigins = [
   "http://localhost:3004", // CRA default
   "http://localhost:3005", // CRA default
    "http://192.168.166.249:3000",
-   "student-frontend-da3c8gbgu-manmitras-projects.vercel.app",
-"student-frontend-cyan.vercel.app",
+   "student-frontend-cyan.vercel.app",
+"student-frontend-git-main-manmitras-projects.vercel.app",
+"student-frontend-1s0b3lnc8-manmitras-projects.vercel.app",
   process.env.FRONTEND_URL, // if you set it in env
 ];
 
