@@ -1,7 +1,7 @@
 import Stress from "../models/stress.js";
-import Depression from "../models/Depression.js";
-import Anxiety from "../models/Anxiety.js";
-import Burnout from "../models/Burnout.js";
+import Depression from "../models/depression.js";
+import Anxiety from "../models/anxiety.js";
+import Burnout from "../models/burnout.js";
 
 // Save test result
 export const saveTestResult = async (req, res) => {
