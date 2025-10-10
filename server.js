@@ -74,6 +74,7 @@ const allowedOrigins = [
   "https://student-frontend-cyan.vercel.app",
 "https://student-frontend-git-main-manmitras-projects.vercel.app",
 "https://student-frontend-1s0b3lnc8-manmitras-projects.vercel.app",
+"https://student-frontend-git-main-manmitras-projects.vercel.app",
   process.env.FRONTEND_URL, // if you set it in env
 ];
 
